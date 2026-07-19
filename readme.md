@@ -1,12 +1,12 @@
-# iotsaOLED - web server to drive an SSD1306 OLED display
+# iotsaOLEDServer - web server to drive an SSD1306 OLED display
 
-![build-platformio](https://github.com/cwi-dis/iotsaOLED/workflows/build-platformio/badge.svg)
-![build-arduino](https://github.com/cwi-dis/iotsaOLED/workflows/build-arduino/badge.svg)
+![build-platformio](https://github.com/cwi-dis/iotsaOLEDServer/workflows/build-platformio/badge.svg)
+![build-arduino](https://github.com/cwi-dis/iotsaOLEDServer/workflows/build-arduino/badge.svg)
 
 iotsaDisplayServer is a web server that drives an SSD1306 OLED display. An atempt has been made to keep
 it as compatible as possible with [iotsaDisplayServer](https://github.com/cwi-dis/iotsaDisplayServer).
 
-Home page is <https://github.com/cwi-dis/iotsaOLED.
+Home page is <https://github.com/cwi-dis/iotsaOLEDServer>.
 This software is licensed under the [MIT license](LICENSE.txt) by the   CWI DIS group, <http://www.dis.cwi.nl>.
 
 ## Software requirements
