@@ -25,6 +25,7 @@ public:
   String info() override;
 protected:
   bool postHandler(const char *path, const JsonVariant& request, JsonObject& reply) override;
+  bool putHandler(const char *path, const JsonVariant& request, JsonObject& reply) override;
 private:
   void handler();
   void printPercentEscape(String &src);

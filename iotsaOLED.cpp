@@ -3,15 +3,6 @@
 
 
 #include <Wire.h>
-#if 0
-// The LiquidCrystal library needed is from
-// https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads/LiquidCrystal_V1.2.1.zip
-#include <LiquidCrystal_I2C.h>
-
-
-
-LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
-#endif
 
 unsigned long clearTime;  // time at which to turn off backlight
 
@@ -124,10 +115,15 @@ String IotsaOLEDMod::info() {
 
 #ifdef IOTSA_WITH_API
 bool IotsaOLEDMod::postHandler(const char *path, const JsonVariant& request, JsonObject& reply) {
+  return putHandler(path, request, reply);
+}
+
+bool IotsaOLEDMod::putHandler(const char *path, const JsonVariant& request, JsonObject& reply) {
   bool any = false;
   if (!request.is<JsonObject>()) return false;
   JsonObject reqObj = request.as<JsonObject>();
-  if (reqObj["clear"]) {
+  bool clear = false;
+  if (getFromRequest<bool, bool>(reqObj, "clear", clear) && clear) {
     any = true;
     display->clearDisplay();
     x = 0;
@@ -135,12 +131,13 @@ bool IotsaOLEDMod::postHandler(const char *path, const JsonVariant& request, Jso
     display->setCursor(0,0);
     display->display();
   }
-  if (getFromRequest<int>(reqObj, "x", x) || getFromRequest<int>(reqObj, "y", y)) {
+  bool changedX = getFromRequest<int>(reqObj, "x", x);
+  bool changedY = getFromRequest<int>(reqObj, "y", y);
+  if (changedX || changedY) {
     display->setCursor(x, y);
     any = true;
   }
-  int backlight = 0;
-  float blacklight = 5;
+  float backlight = 0; // Default is show forever, matching the GET handler's own default
   if (getFromRequest<float>(reqObj, "backlight", backlight)) {
     any = true;
   }
@@ -197,7 +194,7 @@ void IotsaOLEDMod::serverSetup() {
   server->on("/display", std::bind(&IotsaOLEDMod::handler, this));
 #endif
 #ifdef IOTSA_WITH_API
-  api.setup("/api/display", false, false, true);
+  api.setup("/api/display", false, true, true);
   name = "display";
 #endif
 }
