@@ -30,11 +30,7 @@ void IotsaOLEDMod::setup() {
 #ifdef IOTSA_WITH_BLE
   bleApi.setup(serviceUUID, this);
   // Explain to clients what the message characteristic looks like
-  static BLE2904 message2904;
-  message2904.setFormat(BLE2904::FORMAT_UTF8);
-  message2904.setUnit(0x2700);
-  static BLE2901 message2901("Message");
-  bleApi.addCharacteristic(messageUUID, BLE_WRITE, &message2901, &message2904);
+  bleApi.addCharacteristic(messageUUID, BLE_WRITE, NimBLE2904::FORMAT_UTF8, 0x2700, "Message");
 #endif
 
 }
