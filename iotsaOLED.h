@@ -7,10 +7,10 @@
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
 
-class IotsaOLEDMod : public IotsaApiMod, public IotsaBLEApiProvider {
+class IotsaOLEDMod : public IotsaModule {
 public:
   IotsaOLEDMod(IotsaApplication &_app, int _pin_sda, int _pin_scl, int _width, int _height)
-  : IotsaApiMod(_app),
+  : IotsaModule(_app),
     pin_sda(_pin_sda),
     pin_scl(_pin_scl),
     width(_width),
@@ -20,14 +20,14 @@ public:
     display(NULL)
   {}
   void setup() override;
-  void serverSetup() override;
+  void lateSetup() override;
   void loop() override;
   String info() override;
 protected:
   bool postHandler(const char *path, const JsonVariant& request, JsonObject& reply) override;
   bool putHandler(const char *path, const JsonVariant& request, JsonObject& reply) override;
 private:
-  void handler();
+  void webHandler() override;
   void printPercentEscape(String &src);
   void printString(String &src);
   int pin_sda;

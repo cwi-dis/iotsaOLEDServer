@@ -28,8 +28,7 @@ jobs:
       matrix:
         board:
         - nodemcuv2
-        - esp32thing
-        - lolin_d32
+        - lolin32-oled
         build_flags: [""]
 
     steps:

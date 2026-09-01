@@ -6,8 +6,6 @@
 
 unsigned long clearTime;  // time at which to turn off backlight
 
-#ifdef IOTSA_WITH_WEB
-// LCD handlers
 void IotsaOLEDMod::setup() {
   IFDEBUG IotsaSerial.printf("oledSetup %d %d %d %d", pin_sda, pin_scl, width, height);
   Wire.begin(pin_sda, pin_scl);
@@ -30,12 +28,13 @@ void IotsaOLEDMod::setup() {
 #ifdef IOTSA_WITH_BLE
   bleApi.setup(serviceUUID, this);
   // Explain to clients what the message characteristic looks like
-  bleApi.addCharacteristic(messageUUID, BLE_WRITE, NimBLE2904::FORMAT_UTF8, 0x2700, "Message");
+  bleApi.addCharacteristic(messageUUID, bleApi.BLE_WRITE, NimBLE2904::FORMAT_UTF8, 0x2700, "Message");
 #endif
 
 }
 
-void IotsaOLEDMod::handler() {
+void IotsaOLEDMod::webHandler() {
+  IotsaWebServer *server = api.webService->server;
   String msg;
   bool any = false;
   bool didBacklight = false;
@@ -107,9 +106,7 @@ void IotsaOLEDMod::handler() {
 String IotsaOLEDMod::info() {
   return "<p>See <a href='/display'>/display</a> to display messages or <a href='/api/display'>/api/display</a> for REST interface.</p>";
 }
-#endif // IOTSA_WITH_WEB
 
-#ifdef IOTSA_WITH_API
 bool IotsaOLEDMod::postHandler(const char *path, const JsonVariant& request, JsonObject& reply) {
   return putHandler(path, request, reply);
 }
@@ -149,7 +146,6 @@ bool IotsaOLEDMod::putHandler(const char *path, const JsonVariant& request, Json
   }
   return any;
 }
-#endif // IOTSA_WITH_API
 
 #ifdef IOTSA_WITH_BLE
 bool IotsaOLEDMod::blePutHandler(UUIDstring charUUID) {
@@ -185,14 +181,12 @@ void IotsaOLEDMod::loop() {
   }
 }
 
-void IotsaOLEDMod::serverSetup() {
-#ifdef IOTSA_WITH_WEB
-  server->on("/display", std::bind(&IotsaOLEDMod::handler, this));
-#endif
-#ifdef IOTSA_WITH_API
-  api.setup("/api/display", false, true, true);
+void IotsaOLEDMod::lateSetup() {
+  // get=false: GET /api/display is not meaningful (the display is write-only), so
+  // api.setup() registers no web page -- wire /display up on the shared server.
+  api.setup("display", false, true, true);
   name = "display";
-#endif
+  app.server->on("/display", std::bind(&IotsaOLEDMod::webHandler, this));
 }
 
 
