@@ -107,11 +107,11 @@ String IotsaOLEDMod::info() {
   return "<p>See <a href='/display'>/display</a> to display messages or <a href='/api/display'>/api/display</a> for REST interface.</p>";
 }
 
-bool IotsaOLEDMod::postHandler(const char *path, const JsonVariant& request, JsonObject& reply) {
-  return putHandler(path, request, reply);
+bool IotsaOLEDMod::postHandler(const char *path, const JsonVariant& request, JsonObject& reply, bool *changed) {
+  return putHandler(path, request, reply, changed);
 }
 
-bool IotsaOLEDMod::putHandler(const char *path, const JsonVariant& request, JsonObject& reply) {
+bool IotsaOLEDMod::putHandler(const char *path, const JsonVariant& request, JsonObject& reply, bool *changed) {
   bool any = false;
   if (!request.is<JsonObject>()) return false;
   JsonObject reqObj = request.as<JsonObject>();
@@ -144,7 +144,8 @@ bool IotsaOLEDMod::putHandler(const char *path, const JsonVariant& request, Json
       printString(msg);
       any = true;
   }
-  return any;
+  if ((any) && changed) *changed = true;
+  return true;
 }
 
 #ifdef IOTSA_WITH_BLE

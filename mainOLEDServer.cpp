@@ -30,9 +30,6 @@ IotsaOLEDMod displayMod(application, PIN_SDA, PIN_SCL, OLED_WIDTH, OLED_HEIGHT);
 void setup(void) {
   application.setup();
   application.lateSetup();
-#ifndef ESP32
-  ESP.wdtEnable(WDTO_120MS);
-#endif
 }
 
 void loop(void) {
